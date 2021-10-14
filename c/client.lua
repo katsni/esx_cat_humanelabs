@@ -69,34 +69,46 @@ Citizen.CreateThread(function()
 								--Tähän kohtaan omat poliisinotifyt, mulla on tossa alhaalla lindenin versioon
 								TriggerServerEvent("dispatch:lab", Config.LaptopCoords)
 								SetEntityHeading(PlayerPedId(), 162.01419067383)
-								exports['progbar']:Progress({
-									name = "hakkinggi",
-									duration = Config.KauankoKestaa,
-									label = 'Hakkeroidaan!',
-									useWhileDead = true,
-									canCancel = true,
-									controlDisables = {
-										disableMovement = true,
-										disableCarMovement = true,
-										disableMouse = false,
-										disableCombat = true,
-									},
-									animation = {
-										animDict = "mp_prison_break",
-										anim = "hack_loop",
-										flags = 49,
-									},
-								}, function(cancelled)
-									if not cancelled then
-										hackkeringgi = false
-										local randomPassword = math.random(10000, 99999)
-										tallennettuPinKoodi = randomPassword
-										hacked = true
-										NotifyAndCreatePed(tallennettuPinKoodi)
-									else
-										hackkeringgi = false
-									end
-								end)
+								if Config.EnableProgressbar then
+									exports['progbar']:Progress({
+										name = "hakkinggi",
+										duration = Config.KauankoKestaa,
+										label = 'Hakkeroidaan!',
+										useWhileDead = true,
+										canCancel = true,
+										controlDisables = {
+											disableMovement = true,
+											disableCarMovement = true,
+											disableMouse = false,
+											disableCombat = true,
+										},
+										animation = {
+											animDict = "mp_prison_break",
+											anim = "hack_loop",
+											flags = 49,
+										},
+									}, function(cancelled)
+										if not cancelled then
+											hackkeringgi = false
+											local randomPassword = math.random(10000, 99999)
+											tallennettuPinKoodi = randomPassword
+											hacked = true
+											NotifyAndCreatePed(tallennettuPinKoodi)
+										else
+											hackkeringgi = false
+										end
+									end)
+								else
+									ESX.ShowNotification("Hakkeroidaan!")
+									ExecuteCommand("e type3")
+									Wait(120000)
+									ExecuteCommand("emotecancel")
+									hackkeringgi = false
+									local randomPassword = math.random(10000, 99999)
+									tallennettuPinKoodi = randomPassword
+									hacked = true
+									NotifyAndCreatePed(tallennettuPinKoodi)
+								end
 							end
 						else
 							ESX.ShowNotification("Tietokone ollaan jo murrettu!")
@@ -114,7 +126,7 @@ Citizen.CreateThread(function()
 						print(tallennettuPinKoodi)
 						Wait(500)
 						AddTextEntry("Panos!", "Anna pinkoodi")
-						DisplayOnscreenKeyboard(1, "Panos!", "", "", "", "", "", 5)
+						DisplayOnscreenKeyboard(1, "Panos!", "", "", "", "", "", 6)
 
 						while UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2 do
 							Citizen.Wait( 0 )
@@ -123,29 +135,38 @@ Citizen.CreateThread(function()
 						pinCode = tonumber(pinCode)
 						if pinCode == tallennettuPinKoodi then
 							myyty = true
-							exports['progbar']:Progress({
-								name = "sellInfo",
-								duration = 25000,
-								label = 'Myydään tietoja',
-								useWhileDead = true,
-								canCancel = true,
-								controlDisables = {
-									disableMovement = true,
-									disableCarMovement = true,
-									disableMouse = false,
-									disableCombat = true,
-								},
-								animation = {
-									animDict = "oddjobs@assassinate@vice@hooker",
-									anim = "argue_a",
-									flags = 49,
-								},
-							}, function(cancelled)
-								if not cancelled then
-									Wait(150)
-									TriggerServerEvent("esx_cat_humanelabs:jobFinished")
-								end
-							end)
+							if Config.EnableProgressbar then
+								exports['progbar']:Progress({
+									name = "sellInfo",
+									duration = 25000,
+									label = 'Myydään tietoja',
+									useWhileDead = true,
+									canCancel = true,
+									controlDisables = {
+										disableMovement = true,
+										disableCarMovement = true,
+										disableMouse = false,
+										disableCombat = true,
+									},
+									animation = {
+										animDict = "oddjobs@assassinate@vice@hooker",
+										anim = "argue_a",
+										flags = 49,
+									},
+								}, function(cancelled)
+									if not cancelled then
+										Wait(150)
+										TriggerServerEvent("esx_cat_humanelabs:jobFinished")
+									end
+								end)
+							else
+								ESX.ShowNotification("Myydään tietoja!")
+								ExecuteCommand("e argue2")
+								Wait(25000)
+								ExecuteCommand("emotecancel")
+								Wait(150)
+								TriggerServerEvent("esx_cat_humanelabs:jobFinished")
+							end
 						else
 							ESX.ShowNotification("~r~Jykä: Mulle ei väärää tietoa myydä!")
 							SetPedToRagdoll(PlayerPedId(), 20000, 20000, 2, false, false, false)
@@ -208,34 +229,48 @@ end)
 RegisterNetEvent("esx_cat_humanelabs:animation")
 AddEventHandler("esx_cat_humanelabs:animation", function()
 	jutellaan = true
-    exports['progbar']:Progress({
-        name = "talkking",
-        duration = 9999,
-        label = 'Jutellaan pasille!',
-        useWhileDead = true,
-        canCancel = true,
-        controlDisables = {
-            disableMovement = true,
-            disableCarMovement = true,
-            disableMouse = false,
-            disableCombat = true,
-        },
-        animation = {
-            animDict = "oddjobs@assassinate@vice@hooker",
-            anim = "argue_a",
-            flags = 49,
-        },
-    }, function(cancelled)
-        if not cancelled then
-			jutellaan = false
-			local randomPassu = TehdaanSalasana()
-			ESX.ShowNotification("Mene merkattuun sijaintiin ja syötä salasana "..randomPassu)
-			Juteltu = true
-			SetWaypointOff()
-			Wait(50)
-			SetNewWaypoint(3536.19, 3659.5)
-		end
-	end)
+	if Config.EnableProgressbar then
+		exports['progbar']:Progress({
+			name = "talkking",
+			duration = 9999,
+			label = 'Jutellaan pasille!',
+			useWhileDead = true,
+			canCancel = true,
+			controlDisables = {
+				disableMovement = true,
+				disableCarMovement = true,
+				disableMouse = false,
+				disableCombat = true,
+			},
+			animation = {
+				animDict = "oddjobs@assassinate@vice@hooker",
+				anim = "argue_a",
+				flags = 49,
+			},
+		}, function(cancelled)
+			if not cancelled then
+				jutellaan = false
+				local randomPassu = TehdaanSalasana()
+				ESX.ShowNotification("Mene merkattuun sijaintiin ja syötä salasana "..randomPassu)
+				Juteltu = true
+				SetWaypointOff()
+				Wait(50)
+				SetNewWaypoint(3536.19, 3659.5)
+			end
+		end)
+	else
+		ESX.ShowNotification("Jutellaan pasille")
+		ExecuteCommand("e argue2")
+		Wait(9999)
+		ExecuteCommand("emotecancel")
+		jutellaan = false
+		local randomPassu = TehdaanSalasana()
+		ESX.ShowNotification("Mene merkattuun sijaintiin ja syötä salasana "..randomPassu)
+		Juteltu = true
+		SetWaypointOff()
+		Wait(50)
+		SetNewWaypoint(3536.19, 3659.5)
+	end
 end)
 
 CreateNPC = function(coord)
@@ -263,3 +298,10 @@ end
 
 
 
+
+███╗░░░███╗░█████╗░██╗░░░██╗  ░██████╗░█████╗░░█████╗░████████╗░█████╗░███╗░░██╗░█████╗░
+████╗░████║██╔══██╗██║░░░██║  ██╔════╝██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗████╗░██║██╔══██╗
+██╔████╔██║███████║██║░░░██║  ╚█████╗░███████║███████║░░░██║░░░███████║██╔██╗██║███████║
+██║╚██╔╝██║██╔══██║██║░░░██║  ░╚═══██╗██╔══██║██╔══██║░░░██║░░░██╔══██║██║╚████║██╔══██║
+██║░╚═╝░██║██║░░██║╚██████╔╝  ██████╔╝██║░░██║██║░░██║░░░██║░░░██║░░██║██║░╚███║██║░░██║
+╚═╝░░░░░╚═╝╚═╝░░╚═╝░╚═════╝░  ╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝
