@@ -27,7 +27,7 @@ AddEventHandler("esx_cat_humanelabs:aloita", function()
 end)
 
 RegisterServerEvent("esx_cat_humanelabs:jobFinished")
-AddEventHandler("esx_cat_humanelabs:jobFinished", function()
+AddEventHandler("esx_cat_humanelabs:jobFinished", function() --Jos modaajia pelkäät niin tän voit muuttaa callbackiksi
     local _source = source
     local xPlayer = ESX.GetPlayerFromId(_source)
     local Reward = Config.Reward
