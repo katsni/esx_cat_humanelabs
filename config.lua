@@ -9,6 +9,8 @@ Config.StartPed = {
     Heading = 168.48135375977
 }
 
+Config.EnableProgressbar = true--Päälle jos löytyy lentokoneen progressbaari
+
 Config.FakAlue = {
     vector3(946.9802, -3039.928, 11.507),
     vector3(571.9152, 2792.571, 42.0762),
@@ -18,5 +20,5 @@ Config.FakAlue = {
 
 Config.Reward = math.random(45000, 67500)
 
-Config.RequiredCops = 5
+Config.RequiredCops = 0
 
